@@ -1,0 +1,6 @@
+@SupersetAPI_HostAddress = http://localhost:5063
+
+GET {{SupersetAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
