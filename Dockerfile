@@ -1,23 +1,25 @@
-﻿# Usa la imagen SDK para construir la aplicación
+﻿# Dockerfile corregido:
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copia el archivo de proyecto (SupersetAPI.csproj) y restaura las dependencias
-# Asegúrate que la ruta al .csproj sea correcta
-COPY ["SupersetAPI/SupersetAPI.csproj", "SupersetAPI/"]
-RUN dotnet restore "SupersetAPI/SupersetAPI.csproj"
+# 1. Copia el archivo de proyecto, ya que está en la raíz del contexto de build (el directorio actual)
+# Cambiamos el destino a solo la carpeta de trabajo /src
+COPY ["SupersetAPI.csproj", "."]
 
-# Copia el resto del código y construye la aplicación
+# 2. Restaura las dependencias (dentro de /src)
+RUN dotnet restore "SupersetAPI.csproj"
+
+# 3. Copia el resto del código
 COPY . .
-WORKDIR /src/SupersetAPI
+
+# 4. Publica la aplicación
 RUN dotnet publish "SupersetAPI.csproj" -c Release -o /app/publish
 
-# Usa la imagen ASPNET para ejecutar la aplicación (es más pequeña)
+# 5. Imagen de ejecución
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Render usa la variable de entorno $PORT. ASP.NET debe escuchar en ella.
 ENV ASPNETCORE_URLS=http://+:$PORT 
 
 ENTRYPOINT ["dotnet", "SupersetAPI.dll"]
