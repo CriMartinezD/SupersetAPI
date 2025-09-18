@@ -11,7 +11,7 @@ builder.Services.AddCors(options =>
         {
             // Permite el origen de tu aplicación Angular local
             // Cuando vayas a producción, puedes añadir el dominio público de Angular aquí
-            builder.WithOrigins("http://localhost:4200")
+            builder.WithOrigins("http://localhost:4200","http://localhost:3000","https://superset-embed-opencity.onrender.com")
                    .AllowAnyHeader()
                    .AllowAnyMethod();
         });
